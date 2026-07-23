@@ -12,15 +12,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!loading) {
-      if (!user) {
+      if (!user || !profile) {
         router.replace('/login');
-      } else if (profile?.role === 'admin' || profile?.role === 'owner') {
+      } else if (profile.role === 'admin' || profile.role === 'owner') {
         router.replace('/admin');
       }
     }
   }, [loading, user, profile, router]);
 
-  // Jika sedang loading ATAU jika user adalah admin (sedang dalam proses redirect ke /admin)
+  // Jika sedang loading ATAU jika user belum terautentikasi atau belum punya profil valid
   if (loading || !user || !profile || profile?.role === 'admin' || profile?.role === 'owner') {
     return (
       <div className="min-h-screen flex items-center justify-center">

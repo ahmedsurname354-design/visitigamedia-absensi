@@ -32,18 +32,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
 
+    const ensureProfile = async (user: any) => {
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        throw profileError;
+      }
+
+      if (!profileData) {
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert([
+            {
+              id: user.id,
+              full_name: user.user_metadata?.full_name ?? '',
+              email: user.email,
+              role: 'employee',
+              employee_id: null,
+              position: null,
+              department: null,
+              phone: null,
+              avatar_url: null,
+              is_active: true,
+            },
+          ])
+          .single();
+
+        if (createError) {
+          throw createError;
+        }
+
+        return newProfile;
+      }
+
+      return profileData;
+    };
+
     const getUserData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (session?.user) {
           setUser(session.user);
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-            
+          const profileData = await ensureProfile(session.user);
           setProfile(profileData);
         } else {
           setUser(null);
@@ -62,12 +97,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (_event: any, session: any) => {
         if (session?.user) {
           setUser(session.user);
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          setProfile(profileData);
+          try {
+            const profileData = await ensureProfile(session.user);
+            setProfile(profileData);
+          } catch (error) {
+            console.error('Profile ensure error:', error);
+            setProfile(null);
+          }
         } else {
           setUser(null);
           setProfile(null);
