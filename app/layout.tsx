@@ -1,34 +1,45 @@
-import '@/app/globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { AuthProvider } from '@/components/providers/auth-provider';
-import { Toaster } from '@/components/ui/sonner';
+'use client';
 
-const inter = Inter({ subsets: ['latin'] });
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/auth-provider';
+import { AppShell } from '@/components/app-shell';
+import { Loader2 } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: 'VisitigaMedia Absensi — Sistem Absensi Resmi Perusahaan',
-  description:
-    'Sistem absensi digital VisitigaMedia dengan live camera, GPS, lembur, izin/sakit, dan rekap admin export Excel.',
-  icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
-    apple: '/logo.png',
-  },
-};
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user, profile, loading } = useAuth();
+  const router = useRouter();
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="id" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider>
-          <AuthProvider>
-            {children}
-            <Toaster richColors position="top-center" />
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.replace('/login');
+      } else if (profile) {
+        // Jika profile adalah admin/owner, lempar ke /admin
+        if (profile.role === 'admin' || profile.role === 'owner') {
+          router.replace('/admin');
+        }
+      }
+    }
+  }, [loading, user, profile, router]);
+
+  // Tampilkan loading HANYA saat state loading utama masih aktif
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Jika tidak ada user atau role adalah admin/owner, tahan render sampai proses replace selesai
+  if (!user || (profile && (profile.role === 'admin' || profile.role === 'owner'))) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return <AppShell role="employee">{children}</AppShell>;
 }

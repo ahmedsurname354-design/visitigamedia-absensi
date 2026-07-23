@@ -12,12 +12,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!loading) {
-      if (!user) router.replace('/login');
-      else if (profile?.role === 'admin' || profile?.role === 'owner') router.replace('/admin');
+      if (!user) {
+        router.replace('/login');
+      } else if (profile?.role === 'admin' || profile?.role === 'owner') {
+        router.replace('/admin');
+      }
     }
   }, [loading, user, profile, router]);
 
-  if (loading || !user || !profile) {
+  // Jika sedang loading ATAU jika user adalah admin (sedang dalam proses redirect ke /admin)
+  if (loading || !user || !profile || profile?.role === 'admin' || profile?.role === 'owner') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
