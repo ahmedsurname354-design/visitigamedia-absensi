@@ -14,8 +14,10 @@ export default function EmployeeHome() {
   const { profile } = useAuth();
   const [today, setToday] = useState<Attendance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (!profile) return;
     const start = new Date();
     start.setHours(0, 0, 0, 0);
@@ -34,6 +36,10 @@ export default function EmployeeHome() {
       });
   }, [profile]);
 
+  if (!mounted) {
+    return null;
+  }
+
   const checkIn = today.find((a) => a.type === 'check_in');
   const checkOut = today.find((a) => a.type === 'check_out');
 
@@ -47,7 +53,7 @@ export default function EmployeeHome() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold">Halo, {profile?.full_name?.split(' ')[0]} 👋</h1>
+        <h1 className="text-2xl font-bold">Halo, {profile?.full_name?.split(' ')[0] || 'Karyawan'} 👋</h1>
         <p className="text-muted-foreground text-sm mt-1">
           {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
