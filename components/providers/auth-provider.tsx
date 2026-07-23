@@ -32,15 +32,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
 
+    const buildFallbackProfile = (user: any) => ({
+      id: user.id,
+      full_name: user.user_metadata?.full_name ?? user.email ?? 'Pengguna',
+      email: user.email,
+      role: user.user_metadata?.role ?? 'employee',
+      employee_id: null,
+      position: null,
+      department: null,
+      phone: null,
+      is_active: true,
+    });
+
     const ensureProfile = async (user: any) => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role, employee_id, position, department, phone, is_active')
+        .select('*')
         .eq('id', user.id)
         .maybeSingle();
 
       if (profileError) {
-        throw profileError;
+        console.error('ensureProfile select error:', profileError);
+        return buildFallbackProfile(user);
       }
 
       if (!profileData) {
@@ -49,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .insert([
             {
               id: user.id,
-              full_name: user.user_metadata?.full_name ?? '',
+              full_name: user.user_metadata?.full_name ?? user.email ?? '',
               email: user.email,
               role: 'employee',
               employee_id: null,
@@ -58,15 +71,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               phone: null,
               is_active: true,
             },
-          ])
-          .select('id, full_name, email, role, employee_id, position, department, phone, is_active')
-          .single();
+          ]);
 
         if (createError) {
-          throw createError;
+          console.error('ensureProfile insert error:', createError);
+          return buildFallbackProfile(user);
         }
 
-        return newProfile;
+        return newProfile?.[0] ?? buildFallbackProfile(user);
       }
 
       return profileData;
