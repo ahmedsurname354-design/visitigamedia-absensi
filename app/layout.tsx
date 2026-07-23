@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: 'VisitigaMedia Absensi — Sistem Absensi Resmi Perusahaan',
   description:
     'Sistem absensi digital VisitigaMedia dengan live camera, GPS, lembur, izin/sakit, dan rekap admin export Excel.',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
