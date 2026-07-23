@@ -14,26 +14,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!loading) {
       if (!user) {
         router.replace('/login');
-      } else if (profile) {
-        // Jika profile sudah ada tapi bukan admin/owner, lempar ke dashboard
-        if (profile.role !== 'admin' && profile.role !== 'owner') {
-          router.replace('/dashboard');
-        }
+      } else if (profile && profile.role !== 'admin' && profile.role !== 'owner') {
+        router.replace('/dashboard');
       }
     }
   }, [loading, user, profile, router]);
 
-  // Tampilkan loading HANYA saat state loading utama masih aktif
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  // Jika tidak ada user atau role bukan admin, tahan render agar tidak meledak sebelum redirected
-  if (!user || (profile && profile.role !== 'admin' && profile.role !== 'owner')) {
+  if (loading || !user || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
