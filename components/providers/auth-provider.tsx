@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const ensureProfile = async (user: any) => {
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, full_name, email, role, employee_id, position, department, phone, is_active')
         .eq('id', user.id)
         .maybeSingle();
 
@@ -56,10 +56,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               position: null,
               department: null,
               phone: null,
-              avatar_url: null,
               is_active: true,
             },
           ])
+          .select('id, full_name, email, role, employee_id, position, department, phone, is_active')
           .single();
 
         if (createError) {
