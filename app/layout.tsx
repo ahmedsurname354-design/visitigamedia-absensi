@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { Toaster } from 'sonner';
-import { ThemeProvider } from 'next-themes';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 export const metadata: Metadata = {
   title: 'Aplikasi Absensi',
@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider>
           <AuthProvider>
             {children}
             <Toaster position="top-center" richColors />
