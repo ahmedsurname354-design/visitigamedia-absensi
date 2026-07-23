@@ -26,9 +26,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
+
     const getUserData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -96,6 +99,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setProfile(null);
     router.push('/login');
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>

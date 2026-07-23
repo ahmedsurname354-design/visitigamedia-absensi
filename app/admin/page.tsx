@@ -13,8 +13,10 @@ export default function AdminHome() {
   const [stats, setStats] = useState({ employees: 0, todayCheckIn: 0, pendingOvertime: 0, pendingLeaves: 0 });
   const [recent, setRecent] = useState<(Attendance & { profile?: Profile })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     (async () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -48,6 +50,10 @@ export default function AdminHome() {
       setLoading(false);
     })();
   }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   const cards = [
     { label: 'Karyawan Aktif', value: stats.employees, icon: Users, href: '/admin/karyawan', color: 'text-primary' },
