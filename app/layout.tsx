@@ -1,32 +1,26 @@
-'use client';
+import type { Metadata } from 'next';
+import './globals.css';
+import { AuthProvider } from '@/components/providers/auth-provider';
+import { Toaster } from 'sonner';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/providers/auth-provider';
-import { AppShell } from '@/components/app-shell';
-import { Loader2 } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Aplikasi Absensi',
+  description: 'Sistem Absensi Karyawan',
+};
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, profile, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.replace('/login');
-      } else if (profile && (profile.role === 'admin' || profile.role === 'owner')) {
-        router.replace('/admin');
-      }
-    }
-  }, [loading, user, profile, router]);
-
-  if (loading || !user || !profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  return <AppShell role="employee">{children}</AppShell>;
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="id" suppressHydrationWarning>
+      <body suppressHydrationWarning className="min-h-screen bg-background font-sans antialiased">
+        <AuthProvider>
+          {children}
+          <Toaster position="top-center" richColors />
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }
