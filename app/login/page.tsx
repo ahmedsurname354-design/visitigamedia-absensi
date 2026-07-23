@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Fingerprint, ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
@@ -51,8 +52,14 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="w-11 h-11 rounded-xl gradient-orange flex items-center justify-center shadow-lg shadow-primary/30">
-              <Fingerprint className="w-6 h-6 text-white" />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Logo VisitigaMedia"
+                width={44}
+                height={44}
+                className="object-contain"
+              />
             </div>
           </Link>
           <h1 className="text-2xl font-bold">VisitigaMedia Absensi</h1>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import { useAuth } from '@/components/providers/auth-provider';
@@ -8,7 +9,6 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
-  Fingerprint,
   LayoutDashboard,
   Camera,
   Clock,
@@ -64,8 +64,14 @@ export function AppShell({ children, role }: { children: ReactNode; role: 'emplo
       <header className="lg:hidden sticky top-0 z-40 glass border-b border-border/60">
         <div className="flex items-center justify-between h-14 px-4">
           <Link href={role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-orange flex items-center justify-center">
-              <Fingerprint className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Logo VisitigaMedia"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
             </div>
             <span className="font-bold text-sm">VisitigaMedia</span>
           </Link>
@@ -81,8 +87,14 @@ export function AppShell({ children, role }: { children: ReactNode; role: 'emplo
       {/* Sidebar (desktop) */}
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 flex-col border-r border-border/60 bg-card/50 backdrop-blur-sm">
         <div className="h-16 flex items-center gap-2 px-5 border-b border-border/60">
-          <div className="w-9 h-9 rounded-xl gradient-orange flex items-center justify-center shadow-lg shadow-primary/30">
-            <Fingerprint className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="Logo VisitigaMedia"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
           </div>
           <div className="leading-tight">
             <p className="font-bold text-sm">VisitigaMedia</p>

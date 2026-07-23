@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-  Fingerprint,
   MapPin,
   Camera,
   Clock,
@@ -64,8 +64,14 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 glass border-b border-border/60">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl gradient-orange flex items-center justify-center shadow-lg shadow-primary/30">
-              <Fingerprint className="w-5 h-5 text-white" />
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Logo VisitigaMedia"
+                width={36}
+                height={36}
+                className="object-contain"
+              />
             </div>
             <div className="leading-tight">
               <p className="font-bold text-sm sm:text-base">VisitigaMedia</p>
