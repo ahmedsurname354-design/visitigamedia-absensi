@@ -64,16 +64,20 @@ export default function AbsenPage() {
     setSubmitting(true);
     try {
       const photoUrl = await uploadToBucket('attendance-photos', profile.id, captured.photoUrl, 'jpg');
-      const { error } = await supabase.from('attendance').insert({
+      const attendanceInsert: any = {
         user_id: profile.id,
         type: mode,
         photo_url: photoUrl,
         latitude: captured.latitude,
         longitude: captured.longitude,
         address: captured.address,
-        city: captured.city,
         note: note || null,
-      });
+      };
+      if (captured.city) {
+        attendanceInsert.city = captured.city;
+      }
+
+      const { error } = await supabase.from('attendance').insert(attendanceInsert);
       if (error) throw error;
       toast.success(mode === 'check_in' ? 'Absen masuk berhasil!' : 'Absen pulang berhasil!');
       setCaptured(null);

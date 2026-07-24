@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,6 +12,7 @@ import { STATUS_LABELS, LEAVE_TYPE_LABELS } from '@/lib/supabase/types';
 import type { Attendance, Overtime, Leave } from '@/lib/supabase/types';
 
 export default function RiwayatPage() {
+  const router = useRouter();
   const { profile } = useAuth();
   const [attendance, setAttendance] = useState<Attendance[]>([]);
   const [overtime, setOvertime] = useState<Overtime[]>([]);
@@ -19,6 +21,11 @@ export default function RiwayatPage() {
 
   useEffect(() => {
     if (!profile) return;
+    if (profile.role === 'admin' || profile.role === 'owner') {
+      router.replace('/admin/rekap');
+      return;
+    }
+
     (async () => {
       const [att, ot, lv] = await Promise.all([
         supabase
@@ -45,7 +52,7 @@ export default function RiwayatPage() {
       setLeaves((lv.data ?? []) as Leave[]);
       setLoading(false);
     })();
-  }, [profile]);
+  }, [profile, router]);
 
   const statusBadge = (s: string) => {
     if (s === 'approved')

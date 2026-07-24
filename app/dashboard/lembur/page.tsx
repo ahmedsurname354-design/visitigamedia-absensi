@@ -58,7 +58,7 @@ export default function LemburPage() {
     setSubmitting(true);
     try {
       const photoUrl = await uploadToBucket('overtime-photos', profile.id, captured.photoUrl, 'jpg');
-      const { error } = await supabase.from('overtime').insert({
+      const overtimeInsert: any = {
         user_id: profile.id,
         reason,
         start_time: new Date(startTime).toISOString(),
@@ -67,8 +67,12 @@ export default function LemburPage() {
         latitude: captured.latitude,
         longitude: captured.longitude,
         address: captured.address,
-        city: captured.city,
-      });
+      };
+      if (captured.city) {
+        overtimeInsert.city = captured.city;
+      }
+
+      const { error } = await supabase.from('overtime').insert(overtimeInsert);
       if (error) throw error;
       toast.success('Pengajuan lembur terkirim');
       setReason('');

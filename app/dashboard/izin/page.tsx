@@ -30,10 +30,12 @@ export default function IzinPage() {
   const load = async () => {
     if (!profile) return;
     setLoading(true);
+    const { data: authUser } = await supabase.auth.getUser();
+    const userId = authUser?.user?.id ?? profile.id;
     const { data } = await supabase
       .from('leaves')
       .select('*')
-      .eq('user_id', profile.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(20);
     setList((data ?? []) as Leave[]);
@@ -76,8 +78,10 @@ export default function IzinPage() {
         const ext = docFile.name.split('.').pop()?.toLowerCase() ?? 'jpg';
         documentUrl = await uploadToBucket('leave-documents', profile.id, dataUrl, ext);
       }
+      const { data: authUser } = await supabase.auth.getUser();
+      const userId = authUser?.user?.id ?? profile.id;
       const { error } = await supabase.from('leaves').insert({
-        user_id: profile.id,
+        user_id: userId,
         type,
         reason,
         start_date: startDate,

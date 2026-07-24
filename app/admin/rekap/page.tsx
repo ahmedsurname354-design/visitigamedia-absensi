@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/auth-provider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,6 +31,8 @@ import { toast } from 'sonner';
 type Row = Attendance & { profile?: Profile };
 
 export default function AdminRekapPage() {
+  const router = useRouter();
+  const { profile } = useAuth();
   const [rows, setRows] = useState<Row[]>([]);
   const [employees, setEmployees] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,12 +71,18 @@ export default function AdminRekapPage() {
   }, [userId, typeFilter, startDate, endDate]);
 
   useEffect(() => {
+    if (!profile) return;
+    if (profile.role !== 'admin' && profile.role !== 'owner') {
+      router.replace('/dashboard');
+      return;
+    }
+
     supabase
       .from('profiles')
       .select('*')
       .order('full_name', { ascending: true })
       .then(({ data }) => setEmployees((data ?? []) as Profile[]));
-  }, []);
+  }, [profile, router]);
 
   useEffect(() => {
     const t = setTimeout(load, 200);
